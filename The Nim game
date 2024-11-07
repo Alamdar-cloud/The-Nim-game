@@ -1,0 +1,66 @@
+import random # This is a module. Generates random numbers. Determines initial numbers of gems in each pile
+
+def print_instructions(): # Instructions of how to play the game clearly. Rules,objectives
+    """Prints the game instructions."""
+    print("Welcome to the Nim Game!")
+    print("There are three piles of gems.")
+    print("On your turn, you can remove any number of gems from a single pile.")
+    print("The player who removes the last gem wins.")
+    print("Let’s play!")
+#Define defines a fuction. it passes on different inpts
+def display_piles(piles):
+
+    print("\nCurrent state of the piles:") # The display fuction allows you to see how many gems are left basically
+    for i, pile in enumerate(piles, start=1): #enumerate(piles, starts=1) loops over each pile giving both the index and value (pile) for each pile in the list. The start=1 ensures numbering starts from 1 and not 0.
+        print(f"Pile {i}: {pile} gems") # enumerate is the fuction that adds a counter to a list or string and returns it into a enumerate object (gets you the position of the value in a loop)
+# The display pile is to showcase the current state of the piles(how many gems are left in each pile)
+def get_valid_move(piles): #handles getting a valid move from the player
+
+    while True: # Player is asked to choose between pile 1,2 or 3
+        try:
+            pile = int(input("Choose a pile (1, 2, or 3): ")) - 1 #in python  lists are zero indexed which means -1 would mathc index for piles 1,2 and 3
+            gems = int(input(f"How many gems to remove from pile {pile + 1}? ")) # Youre asked to choose how many gems to remove from the pile
+            if pile in range(3) and 0 < gems <= piles[pile]: #Justification for if the move is valid when piles between 1 and 3 are chosen which is why there is (pile in range (3))
+                return pile, gems #THE NUMBER OF GEMS DOES NOT EXCEED THE NUMBER OF GEMS IN THE PILE
+            else:
+                print("Invalid move. Please choose a valid pile and number of gems.") # You will be prompted again
+        except (ValueError, IndexError): #error in input may mean a strong or number outsdie the expected range is caught by "except" block (prints an error message)
+            print("Invalid input. Please enter a valid pile number and gem count.") # The exception block is a mechanism that cathed and handles errors during processes of code
+
+def nim_game(): #Main fuction that handles the game
+    
+    while True:
+        # Step 1: Process where the random numbers between 3-10 are produced
+        piles = [random.randint(3, 10) for _ in range(3)] # sets up the game with its 3 piles with gems between 3-10 in each of them
+        # random.randint(a,b) returns a random integer between 3-10
+        # Step 2: Print the game instructions
+        print_instructions() # Highloghts the rules to you by calling the fuction
+
+        # Step 3: calls for the display_piles fuction
+        display_piles(piles) # Highlights the current state of the piles
+
+        # Step 4 & 5: Loop to alternate turns until the game ends
+        current_player = 1 #  expression sum(piles)checks for the total sum of the gems in the pile is greater than zero
+        while sum(piles) > 0: # Game continues until all gems are removed /n ensures a blank line before a message
+            print(f"\nPlayer {current_player}'s turn.") # current player (variable placeholder) starts at 1. after turn it switches
+            pile, gems = get_valid_move(piles) # get_valid_move + #of gems is deducted from chosen pile. The fstring includes variables directly within a string and embeds expressions to be evaluated with their values when strong is created
+            piles[pile] -= gems
+            display_piles(piles)
+            
+            # Check for a win condition
+            if sum(piles) == 0:
+                print(f"Player {current_player} wins!")
+                break # break is a statement meant to actually break out of a loop
+            
+            # Switch players
+            current_player = 2 if current_player == 1 else 1 #after every move the game checks if the sum of the piles is 0, when it is current player wins!
+        
+        # Ask if players want to play again
+        play_again = input("Do you want to play again? (yes/no): ").strip().lower()
+        if play_again != 'yes':
+            print("Thanks for playing! Goodbye!") # say yes if you want to play again
+            break
+
+# Start the game
+if __name__ == "__main__":
+    nim_game() #call for the fuction to start the game
